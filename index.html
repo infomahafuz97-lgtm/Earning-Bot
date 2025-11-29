@@ -1,201 +1,289 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CashReward App</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CashReward</title>
 
-    <!-- Ad SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='10133059' data-sdk='show_10133059'></script>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #121212; color: #ffffff; }
-        .dark-bg { background-color: #121212; }
-        .card-bg { background-color: #1e1e1e; }
-        .border-accent { border-color: #ff8c00; }
-        .text-accent { color: #ff8c00; }
-        .btn { transition: all 0.2s ease-in-out; }
-        .btn:active { transform: scale(0.95); }
-    </style>
-</head>
-<body>
-
-<h1 class="text-center text-accent text-2xl font-bold mb-4">CashReward – index.html</h1>
-<p class="text-gray-400 text-sm mb-4">This is your fully prepared <strong>index.html</strong> (previously mini app admin.html) with Ads Debug + Reward Config integrated.</p>
-
-<!-- START OF FULL INDEX.HTML -->
-
-<!-- NOTE: Firebase, UI, Auth, Ads, Rewards, Wallet, Tasks — all original components preserved -->
-
-<!-- ==================== HEADER + AD SDK ==================== -->
-<script src='//libtl.com/sdk.js' data-zone='10133059' data-sdk='show_10133059'></script>
+<!-- External libs -->
+<script src="//libtl.com/sdk.js" data-zone="10133059" data-sdk="show_10133059"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <style>
-body { font-family: 'Inter', sans-serif; background:#121212; color:white; }
-.card-bg { background:#1e1e1e; }
-.btn:active { transform:scale(0.95); }
-.main-page{display:none;} .main-page.active{display:flex;}
-.sub-page{display:none;} .sub-page.active{display:block;}
+    body {
+        font-family: Inter, sans-serif;
+        background: #111;
+        color: #fff;
+    }
+    .card { background: #1a1a1a; }
+    .page { display: none; }
+    .page.active { display: block; }
+    .btn:active { transform: scale(.96); }
+    #loader { background: rgba(0,0,0,.55); }
 </style>
+</head>
 
-<!-- ==================== LOADER ==================== -->
-<div id="loader" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-<div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-400"></div></div>
+<body class="px-4">
 
-<!-- ==================== AUTH PAGE ==================== -->
-<div id="auth-section" class="main-page p-6 flex-col justify-center active">
-<h1 class="text-3xl font-bold text-center mb-6 text-orange-400">CashReward</h1>
-<div id="auth-container">
-<div id="login-view">
-<input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded mb-4 bg-[#2c2c2c]">
-<input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded mb-4 bg-[#2c2c2c]">
-<button id="login-btn" class="w-full p-3 rounded bg-orange-500 font-bold">Login</button>
-<p class="text-center mt-2 text-gray-400">Don't have an account? <a id="show-signup" href="#" class="text-orange-400">Sign Up</a></p>
-</div>
-<div id="signup-view" class="hidden">
-<input id="signup-name" type="text" placeholder="Full Name" class="w-full p-3 rounded mb-4 bg-[#2c2c2c]">
-<input id="signup-email" type="email" placeholder="Email" class="w-full p-3 rounded mb-4 bg-[#2c2c2c]">
-<input id="signup-password" type="password" placeholder="Password" class="w-full p-3 rounded mb-4 bg-[#2c2c2c]">
-<button id="signup-btn" class="w-full p-3 rounded bg-orange-500 font-bold">Sign Up</button>
-<p class="text-center mt-2 text-gray-400">Already have an account? <a id="show-login" href="#" class="text-orange-400">Login</a></p>
-</div>
-</div>
+<!-- Loader -->
+<div id="loader" class="hidden fixed inset-0 flex items-center justify-center z-50">
+    <div class="animate-spin h-14 w-14 rounded-full border-t-2 border-b-2 border-orange-400"></div>
 </div>
 
-<!-- ==================== MAIN APP ==================== -->
-<div id="app-container" class="main-page flex-col hidden">
-<header class="p-4 flex justify-between items-center sticky top-0 bg-[#121212] z-10">
-<h2 class="text-xl font-bold">CashReward</h2>
-<div class="flex space-x-4">
-<i data-lucide="bell" class="w-6 h-6" id="notification-bell"></i>
-<i data-lucide="user" class="w-6 h-6" onclick="navigateTo('profile-page')"></i>
-</div>
-</header>
+<!-- Auth Screen -->
+<section id="auth" class="page active pt-10 max-w-md mx-auto">
+    <h1 class="text-3xl text-center font-bold text-orange-400 mb-6">CashReward</h1>
 
-<!-- HOME PAGE -->
-<div id="home-page" class="sub-page p-4 active">
-<div class="card-bg p-4 rounded flex justify-between">
-<div><p class="text-gray-400">Your Balance</p>
-<p class="text-3xl font-bold"><span id="coin-balance">0</span> Coins</p></div>
-<button id="home-withdraw-btn" class="bg-white text-black px-6 py-2 rounded font-bold">Withdraw</button>
-</div>
+    <!-- Login -->
+    <div id="loginBox">
+        <input id="loginEmail" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Email" />
+        <input id="loginPass" type="password" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Password" />
+        <button id="btnLogin" class="w-full p-3 bg-orange-500 rounded font-bold">Login</button>
 
-<h3 class="text-lg font-semibold mt-4">Daily Tasks</h3>
-<div class="mt-2 space-y-3">
-<div class="card-bg p-3 rounded flex justify-between items-center">
-<div><p class="font-semibold">Watch Ad</p><p class="text-gray-400 text-xs">Interstitial</p></div>
-<button class="bg-orange-500 px-4 py-2 rounded text-black font-bold" onclick="claimReward('interstitial')">Start</button>
-</div>
+        <p class="text-center mt-3 text-neutral-400">
+            No account?
+            <span id="gotoSignup" class="text-orange-400 cursor-pointer">Sign up</span>
+        </p>
+    </div>
 
-<div class="card-bg p-3 rounded flex justify-between items-center">
-<div><p class="font-semibold">Click For Reward</p><p class="text-gray-400 text-xs">Popup</p></div>
-<button class="bg-white text-black px-4 py-2 rounded font-bold" onclick="claimReward('popup')">Claim</button>
-</div>
+    <!-- Signup -->
+    <div id="signupBox" class="hidden">
+        <input id="suName" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Full Name" />
+        <input id="suEmail" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Email" />
+        <input id="suPass" type="password" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Password" />
+        <button id="btnSignup" class="w-full p-3 bg-orange-500 rounded font-bold">Sign Up</button>
 
-<div class="card-bg p-3 rounded flex justify-between items-center">
-<div><p class="font-semibold">In-App Video</p><p class="text-gray-400 text-xs">InApp Ad</p></div>
-<button class="bg-gray-700 text-white px-4 py-2 rounded font-bold" onclick="claimReward('inApp')">Play</button>
-</div>
+        <p class="text-center mt-3 text-neutral-400">
+            Already registered?
+            <span id="gotoLogin" class="text-orange-400 cursor-pointer">Login</span>
+        </p>
+    </div>
+</section>
 
-<div class="card-bg p-3 rounded flex justify-between items-center">
-<div><p class="font-semibold">Play MiniGame</p><p class="text-gray-400 text-xs">Big Reward</p></div>
-<button class="bg-blue-500 text-white px-4 py-2 rounded font-bold" onclick="claimReward('miniApp')">Play</button>
-</div>
-</div>
-</div>
+<!-- Main App -->
+<section id="app" class="page max-w-md mx-auto">
 
-<!-- WALLET PAGE -->
-<div id="wallet-page" class="sub-page p-4 hidden">
-<h2 class="text-xl font-bold mb-3">My Wallet</h2>
-<div class="card-bg p-4 rounded">
-<p>Your Balance: <span id="wallet-coin-balance" class="font-bold text-orange-400">0</span></p>
-<p class="text-gray-400 text-sm mb-4">Minimum Withdrawal: <span id="min-withdrawal-info"></span></p>
-<input id="withdraw-amount" type="number" class="w-full p-3 bg-[#2c2c2c] rounded mb-3" placeholder="Enter coin amount">
-<select id="withdraw-method" class="w-full p-3 bg-[#2c2c2c] rounded mb-3"></select>
-<div id="payment-details-container"></div>
-<button id="withdraw-btn" class="w-full p-3 rounded bg-orange-500 font-bold mt-2">Request Withdrawal</button>
-</div>
-</div>
+    <!-- Header -->
+    <header class="sticky top-0 bg-[#111] py-4 flex justify-between items-center">
+        <h2 class="text-xl font-bold">CashReward</h2>
+        <div class="flex gap-4">
+            <i data-lucide="bell" id="navNotify" class="w-6 h-6 cursor-pointer"></i>
+            <i data-lucide="user" id="navProfile" class="w-6 h-6 cursor-pointer"></i>
+        </div>
+    </header>
 
-<!-- PROFILE PAGE -->
-<div id="profile-page" class="sub-page p-4 hidden">
-<h2 class="text-xl font-bold">Profile</h2>
-<p><strong>Name:</strong> <span id="profile-name"></span></p>
-<p><strong>Email:</strong> <span id="profile-email"></span></p>
-<p><strong>Referral Code:</strong> <span id="referral-code"></span></p>
-<button id="copy-code-btn" class="bg-orange-500 px-4 py-2 mt-3 rounded font-bold">Copy Code</button>
-<button id="share-btn" class="bg-blue-500 px-4 py-2 mt-3 rounded font-bold">Share</button>
-<button id="logout-btn" class="bg-red-500 px-4 py-2 mt-6 rounded font-bold">Logout</button>
-</div>
+    <!-- Home -->
+    <div id="home" class="page active p-2">
+        <div class="card p-4 rounded flex justify-between items-center">
+            <div>
+                <p class="text-neutral-400 text-sm">Balance</p>
+                <p class="text-3xl font-bold"><span id="coins">0</span> Coins</p>
+            </div>
+            <button id="goWithdraw" class="bg-white text-black px-5 py-2 rounded font-bold">Withdraw</button>
+        </div>
 
-<!-- NOTIFICATIONS PAGE -->
-<div id="notifications-page" class="sub-page p-4 hidden">
-<h2 class="text-xl font-bold mb-3">Notifications</h2>
-<div id="notifications-list"></div>
-</div>
+        <h3 class="mt-5 text-lg font-semibold">Daily Tasks</h3>
 
-</div><!-- END APP CONTAINER -->
+        <div id="tasks" class="mt-3 space-y-3">
 
-<!-- ==================== FIREBASE + FUNCTIONS + CLAIMREWARD WITH DEBUG ==================== -->
+            <!-- Task template -->
+            <div class="card p-3 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Watch Ad</p>
+                    <p class="text-neutral-400 text-xs">Interstitial</p>
+                </div>
+                <button data-type="interstitial" class="taskBtn bg-orange-500 px-4 py-2 rounded font-bold text-black">Start</button>
+            </div>
+
+            <div class="card p-3 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">Click Reward</p>
+                    <p class="text-neutral-400 text-xs">Popup</p>
+                </div>
+                <button data-type="popup" class="taskBtn bg-white text-black px-4 py-2 rounded font-bold">Claim</button>
+            </div>
+
+            <div class="card p-3 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">In-App Video</p>
+                    <p class="text-neutral-400 text-xs">InApp</p>
+                </div>
+                <button data-type="inApp" class="taskBtn bg-neutral-700 text-white px-4 py-2 rounded font-bold">Play</button>
+            </div>
+
+            <div class="card p-3 rounded flex justify-between items-center">
+                <div>
+                    <p class="font-semibold">MiniGame</p>
+                    <p class="text-neutral-400 text-xs">Big Reward</p>
+                </div>
+                <button data-type="miniApp" class="taskBtn bg-blue-500 text-white px-4 py-2 rounded font-bold">Play</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Wallet -->
+    <div id="wallet" class="page p-2">
+        <h2 class="text-xl font-bold mb-3">Wallet</h2>
+
+        <div class="card p-4 rounded">
+            <p>Balance: <span id="walletCoins" class="text-orange-400 font-bold">0</span></p>
+            <input id="wAmount" type="number" placeholder="Amount" class="w-full p-3 bg-neutral-800 rounded mb-3 mt-3" />
+            <select id="wMethod" class="w-full p-3 bg-neutral-800 rounded mb-3"></select>
+            <div id="wFields"></div>
+
+            <button id="btnWithdraw" class="w-full p-3 bg-orange-500 mt-2 rounded font-bold">
+                Withdraw
+            </button>
+        </div>
+    </div>
+
+    <!-- Profile -->
+    <div id="profile" class="page p-2">
+        <h2 class="text-xl font-bold mb-3">Profile</h2>
+        <p><b>Name:</b> <span id="pfName"></span></p>
+        <p><b>Email:</b> <span id="pfEmail"></span></p>
+        <p><b>Referral:</b> <span id="pfRef"></span></p>
+
+        <button id="copyRef" class="bg-orange-500 px-4 py-2 mt-4 rounded font-bold">Copy Code</button>
+        <button id="shareRef" class="bg-blue-500 px-4 py-2 mt-3 rounded font-bold">Share</button>
+        <button id="btnLogout" class="bg-red-600 px-4 py-2 mt-6 rounded font-bold">Logout</button>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notify" class="page p-2">
+        <h2 class="text-xl font-bold mb-3">Notifications</h2>
+        <div id="notifyList"></div>
+    </div>
+
+</section>
+
+<!-- Logic -->
 <script type="module">
-/* FIREBASE IMPORTS */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import {
+    getAuth, onAuthStateChanged, signInWithEmailAndPassword,
+    createUserWithEmailAndPassword, signOut
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-/* FIREBASE CONFIG */
-const firebaseConfig = { apiKey:"AIza...", authDomain:"...", projectId:"...", storageBucket:"...", messagingSenderId:"...", appId:"..." };
+import {
+    getFirestore, doc, getDoc, setDoc, updateDoc
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const app = initializeApp(firebaseConfig);
+/* Firebase */
+const config = {
+    apiKey: "AIza…",
+    authDomain: "...",
+    projectId: "...",
+    storageBucket: "...",
+    messagingSenderId: "...",
+    appId: "..."
+};
+
+const app = initializeApp(config);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let currentUser = null; let userData = null; let appConfig = {};
+const pages = ["auth","app"];
+const subs = ["home","wallet","profile","notify"];
 
-/* ==================== CLAIM REWARD WITH DEBUG ==================== */
-window.claimReward = async function(taskType) {
-console.log("User clicked:", taskType);
-console.log("Ad SDK Loaded:", typeof window.show_10133059 === "function");
-
-if (!window.show_10133059) return showAlert("Ads not ready");
-
-const userRef = doc(db, "users", currentUser.uid);
-let rewardConfig = { interstitial:40, popup:50, inApp:20, miniApp:100 };
-console.log("Reward Config:", rewardConfig);
-
-let adPromise;
-console.log("Loading ad for:", taskType);
-
-try{
-switch(taskType){
-case 'interstitial': adPromise = window.show_10133059(); break;
-case 'popup': adPromise = window.show_10133059('pop'); break;
-case 'inApp': adPromise = window.show_10133059({type:'inApp', inAppSettings:{frequency:2, capping:0.1}}); break;
-case 'miniApp': adPromise = window.show_10133059(); break;
+function show(id){
+    pages.forEach(p => document.getElementById(p).classList.remove("active"));
+    document.getElementById(id).classList.add("active");
 }
 
-await adPromise;
-console.log("Ad Completed Successfully.");
+function sub(id){
+    subs.forEach(s => document.getElementById(s).classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
 
-let rewardAmount = rewardConfig[taskType] || 0;
-console.log("Reward Amount:", rewardAmount);
+/* Auth switches */
+gotoSignup.onclick = ()=>{ loginBox.classList.add("hidden"); signupBox.classList.remove("hidden"); }
+gotoLogin.onclick  = ()=>{ signupBox.classList.add("hidden"); loginBox.classList.remove("hidden"); }
 
-await updateBalance(rewardAmount);
-showAlert(`You earned ${rewardAmount} coins!`);
-
-} catch(e){ console.error("Ad Error:", e); showAlert("Ad failed, try again."); }
+/* Auth */
+btnLogin.onclick = async ()=>{
+    try{
+        await signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value);
+    }catch(e){ alert("Login failed"); }
 };
 
-</script>
+btnSignup.onclick = async ()=>{
+    try{
+        const u = await createUserWithEmailAndPassword(auth, suEmail.value, suPass.value);
+        await setDoc(doc(db,"users",u.user.uid),{
+            name: suName.value,
+            email: suEmail.value,
+            coins: 0,
+            referral: u.user.uid.slice(0,6)
+        });
+    }catch(e){ alert("Signup failed"); }
+};
 
-<!-- END OF FULL INDEX.HTML -->
+onAuthStateChanged(auth, async user=>{
+    if(!user){ show("auth"); return; }
+
+    const snap = await getDoc(doc(db,"users",user.uid));
+    const d = snap.data();
+
+    pfName.textContent  = d.name;
+    pfEmail.textContent = d.email;
+    pfRef.textContent   = d.referral;
+
+    coins.textContent        = d.coins;
+    walletCoins.textContent  = d.coins;
+
+    show("app");
+    sub("home");
+});
+
+/* Navigation */
+navProfile.onclick = ()=> sub("profile");
+navNotify.onclick = ()=> sub("notify");
+goWithdraw.onclick = ()=> sub("wallet");
+
+/* Ads */
+const reward = {
+    interstitial: 40,
+    popup: 50,
+    inApp: 20,
+    miniApp: 100
+};
+
+async function updateCoins(amount){
+    const u = auth.currentUser;
+    const ref = doc(db,"users",u.uid);
+    const snap = await getDoc(ref);
+    const now = (snap.data().coins || 0) + amount;
+
+    await updateDoc(ref,{ coins: now });
+
+    coins.textContent = now;
+    walletCoins.textContent = now;
+}
+
+document.querySelectorAll(".taskBtn").forEach(btn=>{
+    btn.onclick = async ()=>{
+        const type = btn.dataset.type;
+        try{
+            if(type==="popup") await window.show_10133059("pop");
+            else await window.show_10133059();
+
+            await updateCoins(reward[type] || 0);
+
+            alert(`+${reward[type]} coins earned`);
+        }catch(e){
+            alert("Ad failed");
+        }
+    }
+});
+
+/* Logout */
+btnLogout.onclick = ()=> signOut(auth);
+
+</script>
 
 </body>
 </html>
