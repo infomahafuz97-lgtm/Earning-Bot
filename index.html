@@ -1,289 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>CashReward</title>
-
-<!-- External libs -->
-<script src="//libtl.com/sdk.js" data-zone="10133059" data-sdk="show_10133059"></script>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<script src="https://unpkg.com/lucide@latest"></script>
-
-<style>
-    body {
-        font-family: Inter, sans-serif;
-        background: #111;
-        color: #fff;
-    }
-    .card { background: #1a1a1a; }
-    .page { display: none; }
-    .page.active { display: block; }
-    .btn:active { transform: scale(.96); }
-    #loader { background: rgba(0,0,0,.55); }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earning Bot Mini App</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Monetag SDK -->
+    <script src="https://cdn.monetag.io/monetag-sdk.js"></script>
 </head>
-
-<body class="px-4">
-
-<!-- Loader -->
-<div id="loader" class="hidden fixed inset-0 flex items-center justify-center z-50">
-    <div class="animate-spin h-14 w-14 rounded-full border-t-2 border-b-2 border-orange-400"></div>
-</div>
-
-<!-- Auth Screen -->
-<section id="auth" class="page active pt-10 max-w-md mx-auto">
-    <h1 class="text-3xl text-center font-bold text-orange-400 mb-6">CashReward</h1>
-
-    <!-- Login -->
-    <div id="loginBox">
-        <input id="loginEmail" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Email" />
-        <input id="loginPass" type="password" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Password" />
-        <button id="btnLogin" class="w-full p-3 bg-orange-500 rounded font-bold">Login</button>
-
-        <p class="text-center mt-3 text-neutral-400">
-            No account?
-            <span id="gotoSignup" class="text-orange-400 cursor-pointer">Sign up</span>
-        </p>
+<body>
+    <div class="app-container">
+        <h1>Welcome to Earning Bot!</h1>
+        <p>Your rewards are just a click away.</p>
+        <button id="showAdBtn">Watch Ad & Earn Reward</button>
+        <p id="wallet">Your Points: <span id="points">0</span></p>
     </div>
 
-    <!-- Signup -->
-    <div id="signupBox" class="hidden">
-        <input id="suName" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Full Name" />
-        <input id="suEmail" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Email" />
-        <input id="suPass" type="password" class="w-full p-3 bg-neutral-800 rounded mb-3" placeholder="Password" />
-        <button id="btnSignup" class="w-full p-3 bg-orange-500 rounded font-bold">Sign Up</button>
+    <script>
+        // Telegram Web App Init
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        <p class="text-center mt-3 text-neutral-400">
-            Already registered?
-            <span id="gotoLogin" class="text-orange-400 cursor-pointer">Login</span>
-        </p>
-    </div>
-</section>
+        // Points
+        let points = 0;
 
-<!-- Main App -->
-<section id="app" class="page max-w-md mx-auto">
-
-    <!-- Header -->
-    <header class="sticky top-0 bg-[#111] py-4 flex justify-between items-center">
-        <h2 class="text-xl font-bold">CashReward</h2>
-        <div class="flex gap-4">
-            <i data-lucide="bell" id="navNotify" class="w-6 h-6 cursor-pointer"></i>
-            <i data-lucide="user" id="navProfile" class="w-6 h-6 cursor-pointer"></i>
-        </div>
-    </header>
-
-    <!-- Home -->
-    <div id="home" class="page active p-2">
-        <div class="card p-4 rounded flex justify-between items-center">
-            <div>
-                <p class="text-neutral-400 text-sm">Balance</p>
-                <p class="text-3xl font-bold"><span id="coins">0</span> Coins</p>
-            </div>
-            <button id="goWithdraw" class="bg-white text-black px-5 py-2 rounded font-bold">Withdraw</button>
-        </div>
-
-        <h3 class="mt-5 text-lg font-semibold">Daily Tasks</h3>
-
-        <div id="tasks" class="mt-3 space-y-3">
-
-            <!-- Task template -->
-            <div class="card p-3 rounded flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">Watch Ad</p>
-                    <p class="text-neutral-400 text-xs">Interstitial</p>
-                </div>
-                <button data-type="interstitial" class="taskBtn bg-orange-500 px-4 py-2 rounded font-bold text-black">Start</button>
-            </div>
-
-            <div class="card p-3 rounded flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">Click Reward</p>
-                    <p class="text-neutral-400 text-xs">Popup</p>
-                </div>
-                <button data-type="popup" class="taskBtn bg-white text-black px-4 py-2 rounded font-bold">Claim</button>
-            </div>
-
-            <div class="card p-3 rounded flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">In-App Video</p>
-                    <p class="text-neutral-400 text-xs">InApp</p>
-                </div>
-                <button data-type="inApp" class="taskBtn bg-neutral-700 text-white px-4 py-2 rounded font-bold">Play</button>
-            </div>
-
-            <div class="card p-3 rounded flex justify-between items-center">
-                <div>
-                    <p class="font-semibold">MiniGame</p>
-                    <p class="text-neutral-400 text-xs">Big Reward</p>
-                </div>
-                <button data-type="miniApp" class="taskBtn bg-blue-500 text-white px-4 py-2 rounded font-bold">Play</button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- Wallet -->
-    <div id="wallet" class="page p-2">
-        <h2 class="text-xl font-bold mb-3">Wallet</h2>
-
-        <div class="card p-4 rounded">
-            <p>Balance: <span id="walletCoins" class="text-orange-400 font-bold">0</span></p>
-            <input id="wAmount" type="number" placeholder="Amount" class="w-full p-3 bg-neutral-800 rounded mb-3 mt-3" />
-            <select id="wMethod" class="w-full p-3 bg-neutral-800 rounded mb-3"></select>
-            <div id="wFields"></div>
-
-            <button id="btnWithdraw" class="w-full p-3 bg-orange-500 mt-2 rounded font-bold">
-                Withdraw
-            </button>
-        </div>
-    </div>
-
-    <!-- Profile -->
-    <div id="profile" class="page p-2">
-        <h2 class="text-xl font-bold mb-3">Profile</h2>
-        <p><b>Name:</b> <span id="pfName"></span></p>
-        <p><b>Email:</b> <span id="pfEmail"></span></p>
-        <p><b>Referral:</b> <span id="pfRef"></span></p>
-
-        <button id="copyRef" class="bg-orange-500 px-4 py-2 mt-4 rounded font-bold">Copy Code</button>
-        <button id="shareRef" class="bg-blue-500 px-4 py-2 mt-3 rounded font-bold">Share</button>
-        <button id="btnLogout" class="bg-red-600 px-4 py-2 mt-6 rounded font-bold">Logout</button>
-    </div>
-
-    <!-- Notifications -->
-    <div id="notify" class="page p-2">
-        <h2 class="text-xl font-bold mb-3">Notifications</h2>
-        <div id="notifyList"></div>
-    </div>
-
-</section>
-
-<!-- Logic -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import {
-    getAuth, onAuthStateChanged, signInWithEmailAndPassword,
-    createUserWithEmailAndPassword, signOut
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-
-import {
-    getFirestore, doc, getDoc, setDoc, updateDoc
-} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-/* Firebase */
-const config = {
-    apiKey: "AIza…",
-    authDomain: "...",
-    projectId: "...",
-    storageBucket: "...",
-    messagingSenderId: "...",
-    appId: "..."
-};
-
-const app = initializeApp(config);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const pages = ["auth","app"];
-const subs = ["home","wallet","profile","notify"];
-
-function show(id){
-    pages.forEach(p => document.getElementById(p).classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
-
-function sub(id){
-    subs.forEach(s => document.getElementById(s).classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-}
-
-/* Auth switches */
-gotoSignup.onclick = ()=>{ loginBox.classList.add("hidden"); signupBox.classList.remove("hidden"); }
-gotoLogin.onclick  = ()=>{ signupBox.classList.add("hidden"); loginBox.classList.remove("hidden"); }
-
-/* Auth */
-btnLogin.onclick = async ()=>{
-    try{
-        await signInWithEmailAndPassword(auth, loginEmail.value, loginPass.value);
-    }catch(e){ alert("Login failed"); }
-};
-
-btnSignup.onclick = async ()=>{
-    try{
-        const u = await createUserWithEmailAndPassword(auth, suEmail.value, suPass.value);
-        await setDoc(doc(db,"users",u.user.uid),{
-            name: suName.value,
-            email: suEmail.value,
-            coins: 0,
-            referral: u.user.uid.slice(0,6)
+        // Show Ad Button
+        document.getElementById('showAdBtn').addEventListener('click', () => {
+            // Monetag Rewarded Interstitial
+            show_10253960().then(() => {
+                // Reward user
+                points += 10; // Example: add 10 points per ad
+                document.getElementById('points').textContent = points;
+                alert('You have earned 10 points!');
+            }).catch((err) => {
+                console.error('Ad failed to show:', err);
+                alert('Ad could not be loaded. Please try again.');
+            });
         });
-    }catch(e){ alert("Signup failed"); }
-};
-
-onAuthStateChanged(auth, async user=>{
-    if(!user){ show("auth"); return; }
-
-    const snap = await getDoc(doc(db,"users",user.uid));
-    const d = snap.data();
-
-    pfName.textContent  = d.name;
-    pfEmail.textContent = d.email;
-    pfRef.textContent   = d.referral;
-
-    coins.textContent        = d.coins;
-    walletCoins.textContent  = d.coins;
-
-    show("app");
-    sub("home");
-});
-
-/* Navigation */
-navProfile.onclick = ()=> sub("profile");
-navNotify.onclick = ()=> sub("notify");
-goWithdraw.onclick = ()=> sub("wallet");
-
-/* Ads */
-const reward = {
-    interstitial: 40,
-    popup: 50,
-    inApp: 20,
-    miniApp: 100
-};
-
-async function updateCoins(amount){
-    const u = auth.currentUser;
-    const ref = doc(db,"users",u.uid);
-    const snap = await getDoc(ref);
-    const now = (snap.data().coins || 0) + amount;
-
-    await updateDoc(ref,{ coins: now });
-
-    coins.textContent = now;
-    walletCoins.textContent = now;
-}
-
-document.querySelectorAll(".taskBtn").forEach(btn=>{
-    btn.onclick = async ()=>{
-        const type = btn.dataset.type;
-        try{
-            if(type==="popup") await window.show_10133059("pop");
-            else await window.show_10133059();
-
-            await updateCoins(reward[type] || 0);
-
-            alert(`+${reward[type]} coins earned`);
-        }catch(e){
-            alert("Ad failed");
-        }
-    }
-});
-
-/* Logout */
-btnLogout.onclick = ()=> signOut(auth);
-
-</script>
-
+    </script>
 </body>
 </html>
